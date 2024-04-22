@@ -1,0 +1,29 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  foundry-tests:
+    name: Foundry Forge Contract CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+      - name: Install Forge
+        run: forge install
+      - name: Build
+        run: forge build
+      - name: Foundry Forge test
+        run: forge test -vvv
+        env:
+          FORK_URL: ${{ secrets.FORK_URL }}
