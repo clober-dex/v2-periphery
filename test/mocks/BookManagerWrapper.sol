@@ -30,10 +30,6 @@ contract BookManagerWrapper is BookManager {
         contractURI = contractURI_;
     }
 
-    function setCurrencyDelta(address locker, Currency currency, int256 delta) public {
-        currencyDelta[locker][currency] = delta;
-    }
-
     function setReservesOf(Currency currency, uint256 reserves) public {
         reservesOf[currency] = reserves;
     }
