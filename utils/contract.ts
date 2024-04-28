@@ -47,10 +47,14 @@ export const deployWithVerify = async (
     })
   ).address
 
-  await hre.run('verify:verify', {
-    address: deployedAddress,
-    constructorArguments: args,
-  })
+  try {
+    await hre.run('verify:verify', {
+      address: deployedAddress,
+      constructorArguments: args,
+    })
+  } catch (e) {
+    console.log(e);
+  }
 
   return deployedAddress
 }
