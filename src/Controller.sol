@@ -6,7 +6,6 @@ import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC2
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {ILocker} from "v2-core/interfaces/ILocker.sol";
 import {IBookManager} from "v2-core/interfaces/IBookManager.sol";
 import {IERC721Permit} from "v2-core/interfaces/IERC721Permit.sol";
@@ -19,6 +18,7 @@ import {Tick, TickLibrary} from "v2-core/libraries/Tick.sol";
 import {OrderId, OrderIdLibrary} from "v2-core/libraries/OrderId.sol";
 
 import {IController} from "./interfaces/IController.sol";
+import {ReentrancyGuard} from "./libraries/ReentrancyGuard.sol";
 
 contract Controller is IController, ILocker, ReentrancyGuard {
     using TickLibrary for *;
@@ -392,12 +392,12 @@ contract Controller is IController, ILocker, ReentrancyGuard {
 
     function _settleTokens(address user, address[] memory tokensToSettle) internal {
         Currency native = CurrencyLibrary.NATIVE;
-        int256 currencyDelta = _bookManager.currencyDelta(address(this), native);
+        int256 currencyDelta = _bookManager.getCurrencyDelta(address(this), native);
         if (currencyDelta < 0) {
             native.transfer(address(_bookManager), uint256(-currencyDelta));
             _bookManager.settle(native);
         }
-        currencyDelta = _bookManager.currencyDelta(address(this), native);
+        currencyDelta = _bookManager.getCurrencyDelta(address(this), native);
         if (currencyDelta > 0) {
             _bookManager.withdraw(native, user, uint256(currencyDelta));
         }
@@ -405,12 +405,12 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         uint256 length = tokensToSettle.length;
         for (uint256 i = 0; i < length; ++i) {
             Currency currency = Currency.wrap(tokensToSettle[i]);
-            currencyDelta = _bookManager.currencyDelta(address(this), currency);
+            currencyDelta = _bookManager.getCurrencyDelta(address(this), currency);
             if (currencyDelta < 0) {
                 IERC20(tokensToSettle[i]).safeTransferFrom(user, address(_bookManager), uint256(-currencyDelta));
                 _bookManager.settle(currency);
             }
-            currencyDelta = _bookManager.currencyDelta(address(this), currency);
+            currencyDelta = _bookManager.getCurrencyDelta(address(this), currency);
             if (currencyDelta > 0) {
                 _bookManager.withdraw(Currency.wrap(tokensToSettle[i]), user, uint256(currencyDelta));
             }
