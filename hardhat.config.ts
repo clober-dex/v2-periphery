@@ -85,6 +85,7 @@ const config: HardhatConfig = {
             enabled: true,
             runs: 1000,
           },
+          evmVersion: 'cancun',
         },
       },
     ],
