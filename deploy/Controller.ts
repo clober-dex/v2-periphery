@@ -1,18 +1,12 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
-import { getDeployedAddress } from '../utils'
+import { deployWithVerify, getDeployedAddress } from '../utils'
+import { BOOK_MANAGER } from '../utils/constants'
+import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployments, getNamedAccounts } = hre
-  const { deploy } = deployments
-
-  const { deployer } = await getNamedAccounts()
-
-  await deploy('Controller', {
-    from: deployer,
-    args: [await getDeployedAddress('BookManager')],
-    log: true,
-  })
+  const chain = await getChain(hre.network.provider)
+  await deployWithVerify(hre, 'Controller', [BOOK_MANAGER[chain.id]])
 }
 
 deployFunction.tags = ['Controller']

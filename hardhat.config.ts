@@ -7,6 +7,7 @@ import readlineSync from 'readline-sync'
 import 'hardhat-deploy'
 import '@nomicfoundation/hardhat-viem'
 import '@nomicfoundation/hardhat-foundry'
+import '@nomicfoundation/hardhat-verify'
 import 'hardhat-gas-reporter'
 import 'hardhat-contract-sizer'
 import 'hardhat-abi-exporter'
@@ -79,6 +80,7 @@ const config: HardhatConfig = {
       {
         version: '0.8.25',
         settings: {
+          evmVersion: 'cancun',
           optimizer: {
             enabled: true,
             runs: 1000,
@@ -104,12 +106,6 @@ const config: HardhatConfig = {
       saveDeployments: true,
       tags: ['testnet', 'test'],
       companionNetworks: {},
-      verify: {
-        etherscan: {
-          apiKey: 'artio_testnet',
-          apiUrl: 'https://api.routescan.io/v2/network/testnet/evm/80085/etherscan',
-        },
-      },
     },
     [networkInfos.arbitrumSepolia.id]: {
       url: networkInfos.arbitrumSepolia.rpcUrls.default.http[0],
@@ -124,12 +120,6 @@ const config: HardhatConfig = {
       saveDeployments: true,
       tags: ['testnet', 'test'],
       companionNetworks: {},
-      verify: {
-        etherscan: {
-          apiKey: process.env.ARBISCAN_API_KEY,
-          apiUrl: 'https://api-sepolia.arbiscan.io',
-        },
-      },
     },
     [networkInfos.arbitrum.id]: {
       url: networkInfos.arbitrum.rpcUrls.default.http[0],
@@ -144,12 +134,6 @@ const config: HardhatConfig = {
       saveDeployments: true,
       tags: ['mainnet', 'prod'],
       companionNetworks: {},
-      verify: {
-        etherscan: {
-          apiKey: process.env.ARBISCAN_API_KEY,
-          apiUrl: 'https://api.arbiscan.io',
-        },
-      },
     },
     [networkInfos.base.id]: {
       url: networkInfos.base.rpcUrls.default.http[0],
@@ -164,12 +148,6 @@ const config: HardhatConfig = {
       saveDeployments: true,
       tags: ['mainnet', 'prod'],
       companionNetworks: {},
-      verify: {
-        etherscan: {
-          apiKey: process.env.BASESCAN_API_KEY,
-          apiUrl: 'https://api.basescan.org',
-        },
-      },
     },
     hardhat: {
       chainId: networkInfos.hardhat.id,
@@ -234,6 +212,19 @@ const config: HardhatConfig = {
   // @ts-ignore
   contractSizer: {
     runOnCompile: true,
+  },
+  etherscan: {
+    apiKey: {
+      base: process.env.BASESCAN_API_KEY ?? '',
+      sepolia: process.env.ARBISCAN_API_KEY ?? '',
+      arbitrumSepolia: process.env.ARBISCAN_API_KEY ?? '',
+      berachainArtio: 'berachainArtio',
+    },
+  },
+  sourcify: {
+    // Disabled by default
+    // Doesn't need an API key
+    enabled: true,
   },
 }
 
