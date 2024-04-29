@@ -5,6 +5,8 @@ import * as dotenv from 'dotenv'
 import readlineSync from 'readline-sync'
 
 import 'hardhat-deploy'
+import '@matterlabs/hardhat-zksync-deploy'
+import '@matterlabs/hardhat-zksync-solc'
 import '@nomicfoundation/hardhat-viem'
 import '@nomicfoundation/hardhat-foundry'
 import '@nomicfoundation/hardhat-verify'
@@ -75,6 +77,10 @@ const loadPrivateKeyFromKeyfile = () => {
 }
 
 const config: HardhatConfig = {
+  zksolc: {
+    version: 'latest', // Uses latest available in https://github.com/matter-labs/zksolc-bin/
+    settings: {},
+  },
   solidity: {
     compilers: [
       {
@@ -92,6 +98,52 @@ const config: HardhatConfig = {
   },
   defaultNetwork: 'hardhat',
   networks: {
+    sepolia: {
+      url: networkInfos.sepolia.rpcUrls.default.http[0],
+      chainId: networkInfos.sepolia.id,
+      accounts: process.env.DEV_PRIVATE_KEY ? [process.env.DEV_PRIVATE_KEY] : [],
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1,
+      timeout: 3000000,
+      httpHeaders: {},
+      live: true,
+      saveDeployments: true,
+      tags: ['testnet', 'test'],
+      companionNetworks: {},
+    },
+    [networkInfos.zkSyncSepoliaTestnet.id]: {
+      url: networkInfos.zkSyncSepoliaTestnet.rpcUrls.default.http[0],
+      chainId: networkInfos.zkSyncSepoliaTestnet.id,
+      accounts: process.env.DEV_PRIVATE_KEY ? [process.env.DEV_PRIVATE_KEY] : [],
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1,
+      timeout: 3000000,
+      httpHeaders: {},
+      live: true,
+      saveDeployments: true,
+      tags: ['testnet', 'test'],
+      companionNetworks: {},
+      ethNetwork: 'sepolia', // The Ethereum Web3 RPC URL, or the identifier of the network (e.g. `mainnet` or `sepolia`)
+      zksync: true,
+    },
+    [networkInfos.zkSync.id]: {
+      url: networkInfos.zkSync.rpcUrls.default.http[0],
+      chainId: networkInfos.zkSync.id,
+      accounts: process.env.DEV_PRIVATE_KEY ? [process.env.DEV_PRIVATE_KEY] : [],
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1,
+      timeout: 3000000,
+      httpHeaders: {},
+      live: true,
+      saveDeployments: true,
+      tags: ['mainnet', 'prod'],
+      companionNetworks: {},
+      ethNetwork: 'mainnet', // The Ethereum Web3 RPC URL, or the identifier of the network (e.g. `mainnet` or `sepolia`)
+      zksync: true,
+    },
     [networkInfos.berachainTestnet.id]: {
       url: networkInfos.berachainTestnet.rpcUrls.default.http[0],
       chainId: networkInfos.berachainTestnet.id,
