@@ -2,6 +2,7 @@ import { Address, encodePacked, Hex, keccak256 } from 'viem'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 import { getHRE, liveLog } from './misc'
+import {getImplementationAddress} from "@openzeppelin/upgrades-core";
 
 export const getDeployedAddress = async (name: string): Promise<Address> => {
   const hre = getHRE()
@@ -49,7 +50,7 @@ export const deployWithVerify = async (
 
   try {
     await hre.run('verify:verify', {
-      address: deployedAddress,
+      address: proxy ? await getImplementationAddress(hre.network.provider, deployedAddress) : deployedAddress,
       constructorArguments: args,
     })
   } catch (e) {
