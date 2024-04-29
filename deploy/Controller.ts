@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
-import { deployWithVerify, getDeployedAddress } from '../utils'
+import { deployWithVerify } from '../utils'
 import { BOOK_MANAGER } from '../utils/constants'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 

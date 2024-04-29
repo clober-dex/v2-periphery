@@ -85,7 +85,6 @@ const config: HardhatConfig = {
             enabled: true,
             runs: 1000,
           },
-          evmVersion: 'cancun',
         },
       },
     ],
@@ -220,6 +219,8 @@ const config: HardhatConfig = {
       arbitrumSepolia: process.env.ARBISCAN_API_KEY ?? '',
       berachainArtio: 'berachainArtio',
     },
+    customChains: [],
+    enabled: true,
   },
   sourcify: {
     // Disabled by default
