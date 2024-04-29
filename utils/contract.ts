@@ -54,7 +54,7 @@ export const deployWithVerify = async (
       constructorArguments: args,
     })
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
 
   return deployedAddress
