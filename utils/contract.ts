@@ -2,7 +2,7 @@ import { Address, encodePacked, Hex, keccak256 } from 'viem'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 import { getHRE, liveLog } from './misc'
-import {getImplementationAddress} from "@openzeppelin/upgrades-core";
+import { getImplementationAddress } from '@openzeppelin/upgrades-core'
 
 export const getDeployedAddress = async (name: string): Promise<Address> => {
   const hre = getHRE()
