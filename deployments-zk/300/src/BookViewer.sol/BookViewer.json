@@ -190,13 +190,13 @@
   "entries": [
     {
       "constructorArgs": [
-        "0xd95424eEDC5a9Da8378d762B0620FDD9ae457AE2"
+        "0x50d2BaAe58D13757aFcA5a735CC1D2dDE1ceE0e5"
       ],
       "salt": "0x0000000000000000000000000000000000000000000000000000000000000000",
       "deploymentType": "create",
       "factoryDeps": [],
-      "address": "0x4E52Bb3Ce586C33adbf6DB24d32277b75A25ae0e",
-      "txHash": "0x5f1f39fe0ea2af86ee36f3d68ec212050809762a29a20b5f4facab415b991282"
+      "address": "0x930874edb90B0E2218EEc35330f9B8eBa5baA82a",
+      "txHash": "0xf6672b1dee5133be1e35c36d8257c71e0c2764d122f4e93f014b3df89992bb36"
     }
   ]
 }
