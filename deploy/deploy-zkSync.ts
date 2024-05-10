@@ -9,18 +9,18 @@ import { BOOK_MANAGER } from '../utils/constants'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 dotenv.config()
 
-// load wallet private key from env file
-const PRIVATE_KEY = process.env.DEV_PRIVATE_KEY || ''
-
-if (!PRIVATE_KEY) throw '⛔️ Private key not detected! Add it to the .env file!'
-
 // An example of a deploy script that will deploy and call a simple contract.
 export default async function (hre: HardhatRuntimeEnvironment) {
   const chain = await getChain(hre.network.provider)
   console.log(`Running deploy script for the Controller/Viewer contract`)
 
   // Initialize the wallet.
-  const wallet = new Wallet(PRIVATE_KEY)
+  const accounts = hre.config.networks[chain.id].accounts
+  if (!Array.isArray(accounts)) throw new Error('Invalid accounts')
+  const privateKey = accounts[0]
+  if (!privateKey) throw new Error('Private key not found')
+  if (typeof privateKey !== 'string') throw new Error('Invalid private key')
+  const wallet = new Wallet(privateKey)
 
   // Create deployer object and load the artifact of the contract you want to deploy.
   const deployer = new Deployer(hre, wallet)
@@ -42,10 +42,10 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   const controllerAddress = await controllerContract.getAddress()
   console.log(`${controllerArtifact.contractName} was deployed to ${controllerAddress}`)
 
-  await hre.run("verify:verify", {
+  await hre.run('verify:verify', {
     address: controllerAddress,
     constructorArguments: [bookManager],
-    contract: 'src/Controller.sol:Controller'
+    contract: 'src/Controller.sol:Controller',
   })
 
   const viewerArtifact = await deployer.loadArtifact('BookViewer')
@@ -62,9 +62,9 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   const viewerAddress = await viewerContract.getAddress()
   console.log(`${viewerArtifact.contractName} was deployed to ${viewerAddress}`)
 
-  await hre.run("verify:verify", {
+  await hre.run('verify:verify', {
     address: viewerAddress,
     constructorArguments: [bookManager],
-    contract: 'src/BookViewer.sol:BookViewer'
+    contract: 'src/BookViewer.sol:BookViewer',
   })
 }
