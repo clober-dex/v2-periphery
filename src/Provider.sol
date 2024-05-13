@@ -36,4 +36,6 @@ contract Provider is IProvider {
             emit Claim(broker, protocolTreasury, brokerShare, protocolShare);
         }
     }
+
+    receive() external payable {}
 }
