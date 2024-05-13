@@ -17,4 +17,6 @@ library Constants {
     address public constant TAKER1 = address(0xcde1);
     address public constant TAKER2 = address(0xcde2);
     address public constant TAKER3 = address(0xcde3);
+    address public constant TREASURY = address(0xade1);
+    address public constant BROKER = address(0xade2);
 }
