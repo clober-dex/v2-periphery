@@ -15,7 +15,10 @@ contract ProviderFactory is IProviderFactory, Ownable2Step, Initializable {
     constructor() Ownable(msg.sender) {}
 
     function __ProviderFactory_init(
-        address owner_, address bookManager_, address treasury_, uint256 defaultBrokerShareRatio_
+        address owner_,
+        address bookManager_,
+        address treasury_,
+        uint256 defaultBrokerShareRatio_
     ) public initializer {
         _transferOwnership(owner_);
         Ownable2Step(bookManager_).acceptOwnership();
