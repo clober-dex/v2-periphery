@@ -2,19 +2,22 @@
 pragma solidity ^0.8.0;
 
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IProviderFactory} from "./interfaces/IProviderFactory.sol";
 import {IBookManager} from "v2-core/interfaces/IBookManager.sol";
 import {Provider} from "./Provider.sol";
 
-contract ProviderFactory is IProviderFactory, Ownable2Step {
-    uint256 public immutable defaultBrokerShareRatio;
-    IBookManager public immutable bookManager;
-
+contract ProviderFactory is IProviderFactory, Ownable2Step, Initializable {
+    uint256 public defaultBrokerShareRatio;
+    IBookManager public bookManager;
     address public treasury;
 
-    constructor(address owner_, address bookManager_, address treasury_, uint256 defaultBrokerShareRatio_)
-        Ownable(owner_)
-    {
+    constructor() Ownable(msg.sender) {}
+
+    function __ProviderFactory_init(
+        address owner_, address bookManager_, address treasury_, uint256 defaultBrokerShareRatio_
+    ) public initializer {
+        _transferOwnership(owner_);
         Ownable2Step(bookManager_).acceptOwnership();
         bookManager = IBookManager(bookManager_);
         treasury = treasury_;
