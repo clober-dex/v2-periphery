@@ -14,9 +14,9 @@ contract ProviderTest is Test {
 
     function setUp() public {
         bookManager = address(new MockBookManager(address(this)));
-        Ownable2Step(bookManager).transferOwnership(address(0x2e234DAe75C793f67A35089C9d99245E1C58470b));
         vm.deal(bookManager, 10 ether);
         providerFactory = new ProviderFactory();
+        Ownable2Step(bookManager).transferOwnership(address(providerFactory));
         providerFactory.__ProviderFactory_init(address(this), address(bookManager), Constants.TREASURY, 300000);
     }
 
