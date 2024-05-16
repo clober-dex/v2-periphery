@@ -130,6 +130,12 @@ interface IController {
     }
 
     /**
+     * @notice Returns the book manager
+     * @return The instance of the book manager
+     */
+    function bookManager() external view returns (IBookManager);
+
+    /**
      * @notice Opens a book
      * @param openBookParamsList The parameters of the open book action
      * @param deadline The deadline for the action
