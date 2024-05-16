@@ -13,16 +13,16 @@ import {IController} from "./IController.sol";
  * @notice Interface for the book viewer contract
  */
 interface IBookViewer {
+    struct Liquidity {
+        Tick tick;
+        uint64 depth;
+    }
+
     /**
      * @notice Returns the book manager
      * @return The instance of the book manager
      */
     function bookManager() external view returns (IBookManager);
-
-    struct Liquidity {
-        Tick tick;
-        uint64 depth;
-    }
 
     /**
      * @notice Returns the liquidity for a specific book

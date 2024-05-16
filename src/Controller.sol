@@ -30,10 +30,10 @@ contract Controller is IController, ILocker, ReentrancyGuard {
     using CurrencyLibrary for Currency;
     using FeePolicyLibrary for FeePolicy;
 
-    IBookManager private immutable _bookManager;
+    IBookManager public immutable bookManager;
 
-    constructor(address bookManager) {
-        _bookManager = IBookManager(bookManager);
+    constructor(address bookManager_) {
+        bookManager = IBookManager(bookManager_);
     }
 
     modifier checkDeadline(uint64 deadline) {
@@ -47,11 +47,11 @@ contract Controller is IController, ILocker, ReentrancyGuard {
     }
 
     function getDepth(BookId id, Tick tick) external view returns (uint256) {
-        return uint256(_bookManager.getDepth(id, tick)) * _bookManager.getBookKey(id).unitSize;
+        return uint256(bookManager.getDepth(id, tick)) * bookManager.getBookKey(id).unitSize;
     }
 
     function getHighestPrice(BookId id) external view returns (uint256) {
-        return _bookManager.getHighest(id).toPrice();
+        return bookManager.getHighest(id).toPrice();
     }
 
     function getOrder(OrderId orderId)
@@ -60,10 +60,10 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         returns (address provider, uint256 price, uint256 openAmount, uint256 claimableAmount)
     {
         (BookId bookId, Tick tick,) = orderId.decode();
-        IBookManager.BookKey memory key = _bookManager.getBookKey(bookId);
+        IBookManager.BookKey memory key = bookManager.getBookKey(bookId);
         uint256 unitSize = key.unitSize;
         price = tick.toPrice();
-        IBookManager.OrderInfo memory orderInfo = _bookManager.getOrder(orderId);
+        IBookManager.OrderInfo memory orderInfo = bookManager.getOrder(orderId);
         provider = orderInfo.provider;
         openAmount = unitSize * orderInfo.open;
         FeePolicy makerPolicy = key.makerPolicy;
@@ -83,7 +83,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
     }
 
     function lockAcquired(address sender, bytes memory data) external nonReentrant returns (bytes memory returnData) {
-        if (msg.sender != address(_bookManager) || sender != address(this)) revert InvalidAccess();
+        if (msg.sender != address(bookManager) || sender != address(this)) revert InvalidAccess();
         (address user, Action[] memory actionList, bytes[] memory orderParamsList, address[] memory tokensToSettle) =
             abi.decode(data, (address, Action[], bytes[], address[]));
 
@@ -98,13 +98,13 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             } else if (action == Action.MAKE) {
                 OrderId id = _make(abi.decode(orderParamsList[i], (MakeOrderParams)));
                 if (OrderId.unwrap(id) != 0) {
-                    _bookManager.transferFrom(address(this), user, OrderId.unwrap(id));
+                    bookManager.transferFrom(address(this), user, OrderId.unwrap(id));
                     ids[orderIdIndex++] = id;
                 }
             } else if (action == Action.LIMIT) {
                 OrderId id = _limit(abi.decode(orderParamsList[i], (LimitOrderParams)));
                 if (OrderId.unwrap(id) != 0) {
-                    _bookManager.transferFrom(address(this), user, OrderId.unwrap(id));
+                    bookManager.transferFrom(address(this), user, OrderId.unwrap(id));
                     ids[orderIdIndex++] = id;
                 }
             } else if (action == Action.TAKE) {
@@ -114,12 +114,12 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             } else if (action == Action.CLAIM) {
                 ClaimOrderParams memory claimOrderParams = abi.decode(orderParamsList[i], (ClaimOrderParams));
                 uint256 orderId = OrderId.unwrap(claimOrderParams.id);
-                _bookManager.checkAuthorized(_bookManager.ownerOf(orderId), user, orderId);
+                bookManager.checkAuthorized(bookManager.ownerOf(orderId), user, orderId);
                 _claim(claimOrderParams);
             } else if (action == Action.CANCEL) {
                 CancelOrderParams memory cancelOrderParams = abi.decode(orderParamsList[i], (CancelOrderParams));
                 uint256 orderId = OrderId.unwrap(cancelOrderParams.id);
-                _bookManager.checkAuthorized(_bookManager.ownerOf(orderId), user, orderId);
+                bookManager.checkAuthorized(bookManager.ownerOf(orderId), user, orderId);
                 _cancel(cancelOrderParams);
             } else {
                 revert InvalidAction();
@@ -147,7 +147,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         _permitERC721(erc721PermitParamsList);
 
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        bytes memory result = _bookManager.lock(address(this), lockData);
+        bytes memory result = bookManager.lock(address(this), lockData);
 
         if (result.length != 0) {
             (ids) = abi.decode(result, (OrderId[]));
@@ -165,7 +165,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         }
         address[] memory tokensToSettle;
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        _bookManager.lock(address(this), lockData);
+        bookManager.lock(address(this), lockData);
     }
 
     function limit(
@@ -182,7 +182,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             paramsDataList[i] = abi.encode(orderParamsList[i]);
         }
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        bytes memory result = _bookManager.lock(address(this), lockData);
+        bytes memory result = bookManager.lock(address(this), lockData);
         (ids) = abi.decode(result, (OrderId[]));
     }
 
@@ -200,7 +200,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             paramsDataList[i] = abi.encode(orderParamsList[i]);
         }
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        bytes memory result = _bookManager.lock(address(this), lockData);
+        bytes memory result = bookManager.lock(address(this), lockData);
         (ids) = abi.decode(result, (OrderId[]));
     }
 
@@ -218,7 +218,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             paramsDataList[i] = abi.encode(orderParamsList[i]);
         }
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        _bookManager.lock(address(this), lockData);
+        bookManager.lock(address(this), lockData);
     }
 
     function spend(
@@ -235,7 +235,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             paramsDataList[i] = abi.encode(orderParamsList[i]);
         }
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        _bookManager.lock(address(this), lockData);
+        bookManager.lock(address(this), lockData);
     }
 
     function claim(
@@ -253,7 +253,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             paramsDataList[i] = abi.encode(orderParamsList[i]);
         }
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        _bookManager.lock(address(this), lockData);
+        bookManager.lock(address(this), lockData);
     }
 
     function cancel(
@@ -271,15 +271,15 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             paramsDataList[i] = abi.encode(orderParamsList[i]);
         }
         bytes memory lockData = abi.encode(msg.sender, actionList, paramsDataList, tokensToSettle);
-        _bookManager.lock(address(this), lockData);
+        bookManager.lock(address(this), lockData);
     }
 
     function _open(OpenBookParams memory params) internal {
-        _bookManager.open(params.key, params.hookData);
+        bookManager.open(params.key, params.hookData);
     }
 
     function _make(MakeOrderParams memory params) internal returns (OrderId id) {
-        IBookManager.BookKey memory key = _bookManager.getBookKey(params.id);
+        IBookManager.BookKey memory key = bookManager.getBookKey(params.id);
 
         uint256 quoteAmount = params.quoteAmount;
         if (key.makerPolicy.usesQuote()) {
@@ -287,7 +287,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         }
         uint64 unit = (quoteAmount / key.unitSize).toUint64();
         if (unit > 0) {
-            (id,) = _bookManager.make(
+            (id,) = bookManager.make(
                 IBookManager.MakeParams({key: key, tick: params.tick, unit: unit, provider: address(0)}),
                 params.hookData
             );
@@ -322,10 +322,10 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         internal
         returns (uint256 takenQuoteAmount, uint256 spentBaseAmount)
     {
-        IBookManager.BookKey memory key = _bookManager.getBookKey(params.id);
+        IBookManager.BookKey memory key = bookManager.getBookKey(params.id);
 
-        while (params.quoteAmount > takenQuoteAmount && !_bookManager.isEmpty(params.id)) {
-            Tick tick = _bookManager.getHighest(params.id);
+        while (params.quoteAmount > takenQuoteAmount && !bookManager.isEmpty(params.id)) {
+            Tick tick = bookManager.getHighest(params.id);
             if (params.limitPrice > tick.toPrice()) break;
             uint256 maxAmount;
             unchecked {
@@ -338,7 +338,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             maxAmount = maxAmount.divide(key.unitSize, true);
 
             if (maxAmount == 0) break;
-            (uint256 quoteAmount, uint256 baseAmount) = _bookManager.take(
+            (uint256 quoteAmount, uint256 baseAmount) = bookManager.take(
                 IBookManager.TakeParams({key: key, tick: tick, maxUnit: maxAmount.toUint64()}), params.hookData
             );
             if (quoteAmount == 0) break;
@@ -353,10 +353,10 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         internal
         returns (uint256 takenQuoteAmount, uint256 spentBaseAmount)
     {
-        IBookManager.BookKey memory key = _bookManager.getBookKey(params.id);
+        IBookManager.BookKey memory key = bookManager.getBookKey(params.id);
 
-        while (spentBaseAmount < params.baseAmount && !_bookManager.isEmpty(params.id)) {
-            Tick tick = _bookManager.getHighest(params.id);
+        while (spentBaseAmount < params.baseAmount && !bookManager.isEmpty(params.id)) {
+            Tick tick = bookManager.getHighest(params.id);
             if (params.limitPrice > tick.toPrice()) break;
             uint256 maxAmount;
             unchecked {
@@ -368,7 +368,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             }
             maxAmount = tick.baseToQuote(maxAmount, false) / key.unitSize;
             if (maxAmount == 0) break;
-            (uint256 quoteAmount, uint256 baseAmount) = _bookManager.take(
+            (uint256 quoteAmount, uint256 baseAmount) = bookManager.take(
                 IBookManager.TakeParams({key: key, tick: tick, maxUnit: maxAmount.toUint64()}), params.hookData
             );
             if (baseAmount == 0) break;
@@ -379,12 +379,12 @@ contract Controller is IController, ILocker, ReentrancyGuard {
     }
 
     function _claim(ClaimOrderParams memory params) internal {
-        _bookManager.claim(params.id, params.hookData);
+        bookManager.claim(params.id, params.hookData);
     }
 
     function _cancel(CancelOrderParams memory params) internal {
-        IBookManager.BookKey memory key = _bookManager.getBookKey(params.id.getBookId());
-        try _bookManager.cancel(
+        IBookManager.BookKey memory key = bookManager.getBookKey(params.id.getBookId());
+        try bookManager.cancel(
             IBookManager.CancelParams({id: params.id, toUnit: (params.leftQuoteAmount / key.unitSize).toUint64()}),
             params.hookData
         ) {} catch {}
@@ -392,27 +392,27 @@ contract Controller is IController, ILocker, ReentrancyGuard {
 
     function _settleTokens(address user, address[] memory tokensToSettle) internal {
         Currency native = CurrencyLibrary.NATIVE;
-        int256 currencyDelta = _bookManager.getCurrencyDelta(address(this), native);
+        int256 currencyDelta = bookManager.getCurrencyDelta(address(this), native);
         if (currencyDelta < 0) {
-            native.transfer(address(_bookManager), uint256(-currencyDelta));
-            _bookManager.settle(native);
+            native.transfer(address(bookManager), uint256(-currencyDelta));
+            bookManager.settle(native);
         }
-        currencyDelta = _bookManager.getCurrencyDelta(address(this), native);
+        currencyDelta = bookManager.getCurrencyDelta(address(this), native);
         if (currencyDelta > 0) {
-            _bookManager.withdraw(native, user, uint256(currencyDelta));
+            bookManager.withdraw(native, user, uint256(currencyDelta));
         }
 
         uint256 length = tokensToSettle.length;
         for (uint256 i = 0; i < length; ++i) {
             Currency currency = Currency.wrap(tokensToSettle[i]);
-            currencyDelta = _bookManager.getCurrencyDelta(address(this), currency);
+            currencyDelta = bookManager.getCurrencyDelta(address(this), currency);
             if (currencyDelta < 0) {
-                IERC20(tokensToSettle[i]).safeTransferFrom(user, address(_bookManager), uint256(-currencyDelta));
-                _bookManager.settle(currency);
+                IERC20(tokensToSettle[i]).safeTransferFrom(user, address(bookManager), uint256(-currencyDelta));
+                bookManager.settle(currency);
             }
-            currencyDelta = _bookManager.getCurrencyDelta(address(this), currency);
+            currencyDelta = bookManager.getCurrencyDelta(address(this), currency);
             if (currencyDelta > 0) {
-                _bookManager.withdraw(Currency.wrap(tokensToSettle[i]), user, uint256(currencyDelta));
+                bookManager.withdraw(Currency.wrap(tokensToSettle[i]), user, uint256(currencyDelta));
             }
             uint256 balance = IERC20(tokensToSettle[i]).balanceOf(address(this));
             if (balance > 0) {
@@ -443,7 +443,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         for (uint256 i = 0; i < permitParamsList.length; ++i) {
             PermitSignature memory signature = permitParamsList[i].signature;
             if (signature.deadline > 0) {
-                try IERC721Permit(address(_bookManager)).permit(
+                try IERC721Permit(address(bookManager)).permit(
                     address(this),
                     permitParamsList[i].tokenId,
                     signature.deadline,
