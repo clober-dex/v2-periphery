@@ -1,8 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
-import { deployWithVerify } from '../utils'
+import { deployWithVerify, BOOK_MANAGER } from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
-import { BOOK_MANAGER } from '../utils/constants'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const chain = await getChain(hre.network.provider)
