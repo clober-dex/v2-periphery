@@ -8,6 +8,7 @@ import {
   keccak256,
   parseAbi,
   toHex,
+  TransactionReceipt,
 } from 'viem'
 import { getHRE, liveLog, sleep } from './misc'
 import { Libraries } from 'hardhat-deploy/dist/types'
@@ -101,10 +102,13 @@ export const deployCreate3WithVerify = async (
     liveLog('Contract already deployed at', address, '\n')
   } else {
     txHash = await createXFactory.write.deployCreate3([salt, initcode])
-    const receipt = await publicClient.getTransactionReceipt({ hash: txHash }).catch(async () => {
-      await sleep(500)
-      return publicClient.getTransactionReceipt({ hash: txHash })
-    })
+    const getTransactionReceipt = async (transactionHash: Hex): Promise<TransactionReceipt> => {
+      return publicClient.getTransactionReceipt({ hash: transactionHash }).catch(async () => {
+        await sleep(500)
+        return getTransactionReceipt(transactionHash)
+      })
+    }
+    const receipt = await getTransactionReceipt(txHash)
     const event = receipt.logs
       .filter((log) => log.address.toLowerCase() === CreateXFactoryAddress.toLowerCase())
       .map((log) => decodeEventLog({ abi: createXFactory.abi, data: log.data, topics: log.topics }))
