@@ -2,7 +2,7 @@ import { arbitrumSepolia, base, berachainTestnet } from 'viem/chains'
 import { Address } from 'viem'
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
-  [arbitrumSepolia.id]: '0x3a90fbD5DbE4C82018A4Ac28406A50917dB91def',
-  [base.id]: '0x59fAD5b95e755034572702991ABBA937Cc90254a',
-  [berachainTestnet.id]: '0xA7e0051561D5b955F1014939FB54F71C7F4AEdF1',
+  [arbitrumSepolia.id]: '0xC528b9ED5d56d1D0d3C18A2342954CE1069138a4',
+  [base.id]: '0x382CCccbD3b142D7DA063bF68cd0c89634767F76',
+  [berachainTestnet.id]: '0x982c57388101D012846aDC4997E9b073F3bC16BD',
 }
