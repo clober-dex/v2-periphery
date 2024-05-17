@@ -5,7 +5,7 @@ import { Deployer } from '@matterlabs/hardhat-zksync-deploy'
 
 // load env file
 import dotenv from 'dotenv'
-import { BOOK_MANAGER } from '../utils/constants'
+import { BOOK_MANAGER } from '../utils'
 import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
 dotenv.config()
 
