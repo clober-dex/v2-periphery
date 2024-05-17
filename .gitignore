@@ -21,8 +21,8 @@ coverage
 coverage.json
 
 #Hardhat files
-cache
-artifacts
+cache*
+artifacts*
 typechain/
 
 .idea/
