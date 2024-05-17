@@ -3,6 +3,10 @@
 pragma solidity ^0.8.20;
 
 import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol"; // To generate artifacts
+import {Ownable, Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {IBookManager} from "v2-core/interfaces/IBookManager.sol";
 import {SignificantBit} from "v2-core/libraries/SignificantBit.sol";
 import {Math} from "v2-core/libraries/Math.sol";
@@ -14,7 +18,7 @@ import {FeePolicy, FeePolicyLibrary} from "v2-core/libraries/FeePolicy.sol";
 import {IBookViewer} from "./interfaces/IBookViewer.sol";
 import {IController} from "./interfaces/IController.sol";
 
-contract BookViewer is IBookViewer {
+contract BookViewer is IBookViewer, UUPSUpgradeable, Ownable2Step, Initializable {
     using SafeCast for *;
     using TickLibrary for *;
     using Math for uint256;
@@ -23,9 +27,15 @@ contract BookViewer is IBookViewer {
 
     IBookManager public immutable bookManager;
 
-    constructor(IBookManager bookManager_) {
+    constructor(IBookManager bookManager_) Ownable(msg.sender) {
         bookManager = bookManager_;
     }
+
+    function __BookViewer_init(address owner) external initializer {
+        _transferOwnership(owner);
+    }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function getLiquidity(BookId id, Tick tick, uint256 n) external view returns (Liquidity[] memory liquidity) {
         liquidity = new Liquidity[](n);
