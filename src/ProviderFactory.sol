@@ -50,26 +50,14 @@ contract ProviderFactory is IProviderFactory, UUPSUpgradeable, Ownable2Step, Ini
         emit SetTreasury(newTreasury);
     }
 
-    /**
-     * @notice Whitelists a provider
-     * @param provider The provider address
-     */
     function whitelist(address provider) external onlyOwner {
         bookManager.whitelist(provider);
     }
 
-    /**
-     * @notice Delists a provider
-     * @param provider The provider address
-     */
     function delist(address provider) external onlyOwner {
         bookManager.delist(provider);
     }
 
-    /**
-     * @notice Sets the default provider
-     * @param newDefaultProvider The new default provider address
-     */
     function setDefaultProvider(address newDefaultProvider) external onlyOwner {
         bookManager.setDefaultProvider(newDefaultProvider);
     }
