@@ -25,7 +25,7 @@ contract Provider is IProvider {
 
     function claim(Currency[] calldata currencies) external {
         address protocolTreasury = factory.treasury();
-        for (uint256 i = 0; i < currencies.length; i++) {
+        for (uint256 i = 0; i < currencies.length; ++i) {
             Currency currency = currencies[i];
             _bookManager.collect(address(this), currency);
             uint256 balance = currency.balanceOfSelf();
