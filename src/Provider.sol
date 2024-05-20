@@ -34,7 +34,7 @@ contract Provider is IProvider {
             uint256 protocolShare = balance - brokerShare;
             currency.transfer(broker, brokerShare);
             currency.transfer(protocolTreasury, protocolShare);
-            emit Claim(broker, protocolTreasury, brokerShare, protocolShare);
+            emit Claim(broker, protocolTreasury, currency, brokerShare, protocolShare);
         }
     }
 
