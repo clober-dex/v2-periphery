@@ -8,7 +8,7 @@ interface IProvider {
     event Claim(
         address indexed broker,
         address indexed protocolTreasury,
-        Currency indexed base,
+        Currency indexed currency,
         uint256 brokerShare,
         uint256 protocolShare
     );
