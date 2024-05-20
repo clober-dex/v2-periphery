@@ -5,7 +5,13 @@ import {Currency, CurrencyLibrary} from "v2-core/libraries/Currency.sol";
 import {IProviderFactory} from "./IProviderFactory.sol";
 
 interface IProvider {
-    event Claim(address indexed broker, address indexed protocolTreasury, Currency indexed base, uint256 brokerShare, uint256 protocolShare);
+    event Claim(
+        address indexed broker,
+        address indexed protocolTreasury,
+        Currency indexed base,
+        uint256 brokerShare,
+        uint256 protocolShare
+    );
 
     function factory() external returns (IProviderFactory);
 
