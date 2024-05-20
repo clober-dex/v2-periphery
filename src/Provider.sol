@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+pragma solidity ^0.8.20;
 
 import {IBookManager} from "v2-core/interfaces/IBookManager.sol";
 import {Currency, CurrencyLibrary} from "v2-core/libraries/Currency.sol";
