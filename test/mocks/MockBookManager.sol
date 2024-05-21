@@ -7,6 +7,9 @@ import "@openzeppelin/contracts/access/Ownable2Step.sol";
 contract MockBookManager is Ownable2Step {
     using CurrencyLibrary for Currency;
 
+    mapping(address provider => bool) public isWhitelisted;
+    address public defaultProvider;
+
     constructor(address owner_) Ownable(owner_) {}
 
     function collect(address recipient, Currency currency) external returns (uint256 amount) {
@@ -14,9 +17,19 @@ contract MockBookManager is Ownable2Step {
         currency.transfer(recipient, amount);
     }
 
-    function whitelist(address provider) external onlyOwner {}
+    function whitelist(address provider) external onlyOwner {
+        isWhitelisted[provider] = true;
+    }
 
-    function delist(address provider) external onlyOwner {}
+    function delist(address provider) external onlyOwner {
+        isWhitelisted[provider] = false;
+    }
 
-    function setDefaultProvider(address newDefaultProvider) external onlyOwner {}
+    function setDefaultProvider(address newDefaultProvider) external onlyOwner {
+        _setDefaultProvider(newDefaultProvider);
+    }
+
+    function _setDefaultProvider(address newDefaultProvider) internal {
+        defaultProvider = newDefaultProvider;
+    }
 }
