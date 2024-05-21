@@ -9,7 +9,7 @@ import "../Constants.sol";
 import "../../src/interfaces/IProvider.sol";
 import "v2-core/BookManager.sol";
 
-contract ProviderTest is Test {
+contract ProviderFactoryTest is Test {
     ProviderFactory public providerFactory;
     address public bookManager;
 
