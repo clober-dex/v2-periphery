@@ -6,3 +6,9 @@ export const BOOK_MANAGER: { [chainId: number]: Address } = {
   [base.id]: '0x382CCccbD3b142D7DA063bF68cd0c89634767F76',
   [berachainTestnet.id]: '0x982c57388101D012846aDC4997E9b073F3bC16BD',
 }
+
+export const DEFAULT_BROKER_SHARE_RATIO: { [chainId: number]: number } = {
+  [arbitrumSepolia.id]: 700_000,
+  [base.id]: 700_000,
+  [berachainTestnet.id]: 700_000,
+}
