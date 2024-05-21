@@ -23,52 +23,52 @@ contract ProviderTest is Test {
 
     function testSetTreasury() public {
         assertEq(providerFactory.treasury(), Constants.TREASURY);
-        providerFactory.setTreasury(address (0x1234567));
-        assertEq(providerFactory.treasury(), address (0x1234567));
+        providerFactory.setTreasury(address(0x1234567));
+        assertEq(providerFactory.treasury(), address(0x1234567));
     }
 
     function testWhitelist() public {
-        assertFalse(IBookManager(bookManager).isWhitelisted(address (0x1234567)));
-        providerFactory.whitelist(address (0x1234567));
-        assertTrue(IBookManager(bookManager).isWhitelisted(address (0x1234567)));
-        providerFactory.delist(address (0x1234567));
-        assertFalse(IBookManager(bookManager).isWhitelisted(address (0x1234567)));
+        assertFalse(IBookManager(bookManager).isWhitelisted(address(0x1234567)));
+        providerFactory.whitelist(address(0x1234567));
+        assertTrue(IBookManager(bookManager).isWhitelisted(address(0x1234567)));
+        providerFactory.delist(address(0x1234567));
+        assertFalse(IBookManager(bookManager).isWhitelisted(address(0x1234567)));
     }
 
     function testSetDefaultProvider() public {
-        providerFactory.setDefaultProvider(address (0x1234567));
-        assertEq(IBookManager(bookManager).defaultProvider(), address (0x1234567));
+        providerFactory.setDefaultProvider(address(0x1234567));
+        assertEq(IBookManager(bookManager).defaultProvider(), address(0x1234567));
     }
 
     function testTransferOwnership() public {
-        providerFactory.transferBookManagerOwnership(address (0x1234567));
-        assertEq(Ownable2Step(bookManager).pendingOwner(), address (0x1234567));
-        assertEq(Ownable2Step(bookManager).owner(), address (providerFactory));
+        providerFactory.transferBookManagerOwnership(address(0x1234567));
+        assertEq(Ownable2Step(bookManager).pendingOwner(), address(0x1234567));
+        assertEq(Ownable2Step(bookManager).owner(), address(providerFactory));
         vm.expectRevert();
         Ownable2Step(bookManager).acceptOwnership();
-        vm.prank(address (0x1234567));
+        vm.prank(address(0x1234567));
         Ownable2Step(bookManager).acceptOwnership();
-        assertEq(Ownable2Step(bookManager).owner(), address (0x1234567));
+        assertEq(Ownable2Step(bookManager).owner(), address(0x1234567));
     }
 
     function testOnlyOwner() public {
-        vm.startPrank(address (0x1234567));
+        vm.startPrank(address(0x1234567));
         vm.expectRevert();
-        providerFactory.setTreasury(address (0x987656));
+        providerFactory.setTreasury(address(0x987656));
         vm.expectRevert();
-        providerFactory.deployProvider(address (0x987656), 1234);
+        providerFactory.deployProvider(address(0x987656), 1234);
         vm.expectRevert();
-        providerFactory.whitelist(address (0x987656));
+        providerFactory.whitelist(address(0x987656));
         vm.expectRevert();
-        providerFactory.delist(address (0x987656));
+        providerFactory.delist(address(0x987656));
         vm.expectRevert();
-        providerFactory.setDefaultProvider(address (0x987656));
+        providerFactory.setDefaultProvider(address(0x987656));
         vm.expectRevert();
-        providerFactory.transferBookManagerOwnership(address (0x987656));
+        providerFactory.transferBookManagerOwnership(address(0x987656));
     }
 
     function testProvider() public {
-        vm.prank(address (0x1234567));
+        vm.prank(address(0x1234567));
         IProvider provider = IProvider(providerFactory.deployProvider(Constants.BROKER));
         Currency[] memory currencies = new Currency[](1);
         currencies[0] = CurrencyLibrary.NATIVE;
