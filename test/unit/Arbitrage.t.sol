@@ -39,7 +39,7 @@ contract ControllerTakeOrderTest is ControllerTest {
         manager = new BookManager(address(this), Constants.DEFAULT_PROVIDER, "baseUrl", "contractUrl", "name", "symbol");
         controller = new Controller(address(manager));
         bookViewer = new BookViewer(manager);
-        arbitrage = new Arbitrage(address(manager), address (this));
+        arbitrage = new Arbitrage(address(manager), address(this));
         arbitrage.setOperator(Constants.TAKER1, true);
         routerMock = new RouterMock();
         IController.OpenBookParams[] memory openBookParamsList = new IController.OpenBookParams[](1);
@@ -48,7 +48,7 @@ contract ControllerTakeOrderTest is ControllerTest {
 
         vm.deal(Constants.MAKER1, 1000 * 10 ** 18);
 
-        mockErc20.mint(address (routerMock), 1000 * 10 ** 18);
+        mockErc20.mint(address(routerMock), 1000 * 10 ** 18);
 
         _makeOrder(Constants.PRICE_TICK, Constants.QUOTE_AMOUNT1, Constants.MAKER1);
     }
@@ -64,8 +64,14 @@ contract ControllerTakeOrderTest is ControllerTest {
         (uint256 takenQuoteAmount, uint256 spentBaseAmount) = bookViewer.getExpectedOutput(paramsList);
 
         vm.startPrank(Constants.TAKER1);
-        bytes memory data = abi.encodeWithSelector(routerMock.swap.selector, Currency.unwrap(key.quote), takenQuoteAmount - 50000, Currency.unwrap(key.base), Constants.BASE_AMOUNT1);
-        arbitrage.arbitrage(key.toId(), address (routerMock), data);
+        bytes memory data = abi.encodeWithSelector(
+            routerMock.swap.selector,
+            Currency.unwrap(key.quote),
+            takenQuoteAmount - 50000,
+            Currency.unwrap(key.base),
+            Constants.BASE_AMOUNT1
+        );
+        arbitrage.arbitrage(key.toId(), address(routerMock), data);
         vm.stopPrank();
 
         assertEq(Constants.TAKER1.balance, 50000);
