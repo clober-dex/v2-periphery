@@ -39,7 +39,8 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
         emit SetOperator(operator, status);
     }
 
-    function lockAcquired(address sender, bytes memory data) external nonReentrant returns (bytes memory returnData) {
+    function lockAcquired(address sender, bytes memory data) external nonReentrant returns (bytes memory) {
+        if (msg.sender != address(bookManager) || sender != address(this)) revert InvalidAccess();
         address user;
         BookId id;
         address router;
@@ -78,10 +79,10 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
             }
             maxAmount = tick.baseToQuote(maxAmount, false) / key.unitSize;
             if (maxAmount == 0) break;
-            (, uint256 baseAmount) =
+            (, uint256 amount) =
                 bookManager.take(IBookManager.TakeParams({key: key, tick: tick, maxUnit: maxAmount.toUint64()}), "");
-            if (baseAmount == 0) break;
-            spentBaseAmount += baseAmount;
+            if (amount == 0) break;
+            spentBaseAmount += amount;
         }
 
         _settleCurrency(user, key.quote);
