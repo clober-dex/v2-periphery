@@ -48,22 +48,20 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
 
         IBookManager.BookKey memory key = bookManager.getBookKey(id);
         uint256 max;
-        uint256 value;
-        bool native = key.quote.isNative();
-        if (native) {
+        bool success;
+        bytes memory returnData;
+        if (key.quote.isNative()) {
             max = address(bookManager).balance;
-            value = max;
+            bookManager.withdraw(key.quote, address(this), max);
+            (success, returnData) = router.call{value: max}(data);
         } else {
             IERC20 quote = IERC20(Currency.unwrap(key.quote));
             max = quote.balanceOf(address(bookManager));
             quote.approve(router, max);
-        }
-        bookManager.withdraw(key.quote, address(this), max);
-        (bool success, bytes memory returnData) = router.call{value: value}(data);
-        if (!success) revert();
-        if (!native) {
+            (success, returnData) = router.call(data);
             quote.approve(router, 0);
         }
+        if (!success) revert();
 
         uint256 quoteAmount = max - key.quote.balanceOfSelf();
         uint256 baseAmount = key.base.balanceOfSelf();
