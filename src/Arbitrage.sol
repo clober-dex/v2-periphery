@@ -49,7 +49,8 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
         IBookManager.BookKey memory key = bookManager.getBookKey(id);
         uint256 max;
         uint256 value;
-        if (key.quote.isNative()) {
+        bool native = key.quote.isNative();
+        if (native) {
             max = address(bookManager).balance;
             value = max;
         } else {
@@ -60,6 +61,9 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
         bookManager.withdraw(key.quote, address(this), max);
         (bool success, bytes memory returnData) = router.call{value: value}(data);
         if (!success) revert();
+        if (!native) {
+            quote.approve(router, 0);
+        }
 
         uint256 quoteAmount = max - key.quote.balanceOfSelf();
         uint256 baseAmount = key.base.balanceOfSelf();
