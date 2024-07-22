@@ -66,12 +66,13 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
         uint256 quoteAmount = max - key.quote.balanceOfSelf();
         uint256 baseAmount = key.base.balanceOfSelf();
         uint256 spentBaseAmount;
+        uint256 price;
         if (key.takerPolicy.usesQuote()) {
-            quoteAmount = key.takerPolicy.calculateOriginalAmount(quoteAmount, true);
+            quoteAmount += key.takerPolicy.calculateFee(quoteAmount, false);
+            price = (quoteAmount << 96) / baseAmount;
         } else {
-            baseAmount = key.takerPolicy.calculateOriginalAmount(baseAmount, false);
+            price = (quoteAmount << 96) / key.takerPolicy.calculateOriginalAmount(baseAmount, false);
         }
-        uint256 price = (quoteAmount << 96) / baseAmount;
 
         while (spentBaseAmount < baseAmount && !bookManager.isEmpty(id)) {
             Tick tick = bookManager.getHighest(id);
