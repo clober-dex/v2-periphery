@@ -112,5 +112,9 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
         currency.transfer(user, currency.balanceOfSelf());
     }
 
+    function withdrawToken(Currency currency, uint256 amount, address recipient) external onlyOwner {
+        currency.transfer(recipient, amount);
+    }
+
     receive() external payable {}
 }
