@@ -3,7 +3,6 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { BOOK_MANAGER, deployWithVerify, SAFE_WALLET } from '../utils'
 import { getChain, isDevelopmentNetwork } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address } from 'viem'
-import { arbitrum } from 'viem/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -14,13 +13,14 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
     return
   }
 
-  let owner: Address = '0x'
+  let owner: Address
   if (chain.testnet || isDevelopmentNetwork(chain.id)) {
     owner = deployer
-  } else if (chain.id === arbitrum.id) {
-    owner = SAFE_WALLET[chain.id] // Safe
   } else {
-    throw new Error('Unknown chain')
+    owner = SAFE_WALLET[chain.id] // Safe
+    if (owner == undefined) {
+      throw new Error('Unknown chain')
+    }
   }
 
   await deployWithVerify(hre, 'Arbitrage', [BOOK_MANAGER[chain.id], owner])
