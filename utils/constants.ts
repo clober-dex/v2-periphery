@@ -1,4 +1,4 @@
-import { arbitrumSepolia, base, berachainTestnet } from 'viem/chains'
+import { arbitrumSepolia, base, berachainTestnet, arbitrum } from 'viem/chains'
 import { Address } from 'viem'
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
@@ -11,4 +11,9 @@ export const DEFAULT_BROKER_SHARE_RATIO: { [chainId: number]: number } = {
   [arbitrumSepolia.id]: 700_000,
   [base.id]: 700_000,
   [berachainTestnet.id]: 700_000,
+}
+
+export const SAFE_WALLET: { [chainId: number]: Address } = {
+  [base.id]: '0xfb976Bae0b3Ef71843F1c6c63da7Df2e44B3836d',
+  [arbitrum.id]: '0x290D9de8d51fDf4683Aa761865743a28909b2553',
 }
