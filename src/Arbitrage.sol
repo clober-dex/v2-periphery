@@ -110,7 +110,10 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
             currency.transfer(address(bookManager), uint256(currencyDelta));
         }
         bookManager.settle(currency);
-        currency.transfer(user, currency.balanceOfSelf());
+        uint256 balance = currency.balanceOfSelf();
+        if (balance > 0) {
+            currency.transfer(user, balance);
+        }
     }
 
     function withdrawToken(Currency currency, uint256 amount, address recipient) external onlyOwner {
