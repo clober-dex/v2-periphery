@@ -62,7 +62,7 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
             (success, returnData) = router.call(data);
             quote.approve(router, 0);
         }
-        if (!success) revert();
+        if (!success) revert(string(returnData));
 
         uint256 quoteAmount = max - key.quote.balanceOfSelf();
         uint256 baseAmount = key.base.balanceOfSelf();
