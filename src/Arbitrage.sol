@@ -57,6 +57,7 @@ contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
         } else {
             IERC20 quote = IERC20(Currency.unwrap(key.quote));
             max = quote.balanceOf(address(bookManager));
+            bookManager.withdraw(key.quote, address(this), max);
             quote.approve(router, max);
             (success, returnData) = router.call(data);
             quote.approve(router, 0);
