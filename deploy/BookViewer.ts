@@ -10,7 +10,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   const chain = await getChain(network.provider)
   const deployer = (await getNamedAccounts())['deployer'] as Address
 
-  if (await deployments.getOrNull('BookViewer')) {
+  if (await deployments.getOrNull('BookViewer_Implementation')) {
     return
   }
 
@@ -26,15 +26,20 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   const implementation = (await deployWithVerify(hre, 'BookViewer_Implementation', [BOOK_MANAGER[chain.id]], {
     contract: 'BookViewer',
   })) as Address
+
+  let viewer = (await deployments.getOrNull('BookViewer'))?.address
   const bookViewerArtifact = await hre.artifacts.readArtifact('BookViewer')
-  const initData = encodeFunctionData({
-    abi: bookViewerArtifact.abi,
-    functionName: '__BookViewer_init',
-    args: [owner],
-  })
-  const viewer = await deployCreate3WithVerify(deployer, 0xffffn, 'BookViewer_Proxy', [implementation, initData], {
-    contract: 'ERC1967Proxy',
-  })
+  if (!viewer) {
+    const initData = encodeFunctionData({
+      abi: bookViewerArtifact.abi,
+      functionName: '__BookViewer_init',
+      args: [owner],
+    })
+    viewer = await deployCreate3WithVerify(deployer, 0xffffn + 3n, 'BookViewer_Proxy', [implementation, initData], {
+      contract: 'ERC1967Proxy',
+    })
+  }
+
   await deployments.save('BookViewer', {
     address: viewer,
     abi: bookViewerArtifact.abi,
