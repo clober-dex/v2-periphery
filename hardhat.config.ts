@@ -234,8 +234,8 @@ const config: HardhatConfig = {
   sourcify: {
     // Enable Sourcify verification by default
     enabled: true,
-    apiUrl: "https://sourcify.dev/server",
-    browserUrl: "https://repo.sourcify.dev",
+    apiUrl: 'https://sourcify.dev/server',
+    browserUrl: 'https://repo.sourcify.dev',
   },
 }
 

@@ -1,4 +1,4 @@
-import {arbitrumSepolia, base, arbitrum, berachainTestnetbArtio} from 'viem/chains'
+import { arbitrumSepolia, base, arbitrum, berachainTestnetbArtio } from 'viem/chains'
 import { Address } from 'viem'
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
