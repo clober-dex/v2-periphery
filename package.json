@@ -27,9 +27,9 @@
   "license": "ISC",
   "files": [],
   "devDependencies": {
-    "@nomicfoundation/hardhat-viem": "^2.0.0",
+    "@nomicfoundation/hardhat-viem": "^2.0.3",
     "@nomicfoundation/hardhat-foundry": "^1.1.1",
-    "@nomicfoundation/hardhat-verify": "^2.0.6",
+    "@nomicfoundation/hardhat-verify": "^2.0.9",
     "@openzeppelin/upgrades-core": "^1.33.1",
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
@@ -41,7 +41,7 @@
     "hardhat": "^2.22.2",
     "hardhat-abi-exporter": "^2.10.1",
     "hardhat-contract-sizer": "^2.10.0",
-    "hardhat-deploy": "^0.12.2",
+    "hardhat-deploy": "^0.12.4",
     "hardhat-gas-reporter": "^1.0.9",
     "hardhat-log-remover": "^2.0.2",
     "keythereum": "^2.0.0",
@@ -50,6 +50,6 @@
     "prettier-plugin-solidity": "^1.2.0",
     "readline-sync": "^1.4.10",
     "ts-node": "^10.9.2",
-    "viem": "^2.9.15"
+    "viem": "^2.20.0"
   }
 }
