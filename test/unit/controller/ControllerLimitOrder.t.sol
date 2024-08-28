@@ -27,7 +27,7 @@ contract ControllerLimitOrderTest is ControllerTest {
 
         key = IBookManager.BookKey({
             base: Currency.wrap(address(mockErc20)),
-            unitSize: 1e12,
+            unitSize: 1e6,
             quote: CurrencyLibrary.NATIVE,
             makerPolicy: FeePolicyLibrary.encode(true, -100),
             takerPolicy: FeePolicyLibrary.encode(true, 100),
@@ -79,12 +79,23 @@ contract ControllerLimitOrderTest is ControllerTest {
     }
 
     function testLimitOrder() public {
-        uint256 quoteAmount = 199999999880000000000;
+        uint256 quoteAmount = 199999999999999998800;
         uint256 takeAmount = 93999999060000000000;
 
         uint256 beforeBalance = Constants.MAKER2.balance;
         uint256 beforeTokenBalance = mockErc20.balanceOf(Constants.MAKER2);
         _limitOrder(Constants.PRICE_TICK, Constants.QUOTE_AMOUNT1, Constants.MAKER2, takeBookKey);
+        assertEq(quoteAmount, beforeBalance - Constants.MAKER2.balance);
+        assertEq(beforeTokenBalance + takeAmount, mockErc20.balanceOf(Constants.MAKER2));
+    }
+
+    function testLimitSmallOrder() public {
+        uint256 quoteAmount = 47000000000000000000;
+        uint256 takeAmount = 46995300000000000000;
+
+        uint256 beforeBalance = Constants.MAKER2.balance;
+        uint256 beforeTokenBalance = mockErc20.balanceOf(Constants.MAKER2);
+        _limitOrder(Constants.PRICE_TICK, Constants.QUOTE_AMOUNT3 / 2, Constants.MAKER2, takeBookKey);
         assertEq(quoteAmount, beforeBalance - Constants.MAKER2.balance);
         assertEq(beforeTokenBalance + takeAmount, mockErc20.balanceOf(Constants.MAKER2));
     }

@@ -296,7 +296,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
     }
 
     function _limit(LimitOrderParams memory params) internal returns (OrderId id) {
-        (, uint256 spentBaseAmount) = _spend(
+        (bool isQuoteRemained, uint256 spentQuoteAmount) = _spend(
             SpendOrderParams({
                 id: params.takeBookId,
                 limitPrice: params.limitPrice,
@@ -305,8 +305,8 @@ contract Controller is IController, ILocker, ReentrancyGuard {
                 hookData: params.takeHookData
             })
         );
-        params.quoteAmount -= spentBaseAmount;
-        if (params.quoteAmount > 0) {
+        params.quoteAmount -= spentQuoteAmount;
+        if (isQuoteRemained) {
             id = _make(
                 MakeOrderParams({
                     id: params.makeBookId,
@@ -349,15 +349,20 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         if (params.maxBaseAmount < spentBaseAmount) revert ControllerSlippage();
     }
 
-    function _spend(SpendOrderParams memory params)
-        internal
-        returns (uint256 takenQuoteAmount, uint256 spentBaseAmount)
-    {
+    function _spend(SpendOrderParams memory params) internal returns (bool isBaseRemained, uint256 spentBaseAmount) {
+        uint256 takenQuoteAmount;
         IBookManager.BookKey memory key = bookManager.getBookKey(params.id);
 
-        while (spentBaseAmount < params.baseAmount && !bookManager.isEmpty(params.id)) {
+        while (spentBaseAmount < params.baseAmount) {
+            if (bookManager.isEmpty(params.id)) {
+                isBaseRemained = true;
+                break;
+            }
             Tick tick = bookManager.getHighest(params.id);
-            if (params.limitPrice > tick.toPrice()) break;
+            if (params.limitPrice > tick.toPrice()) {
+                isBaseRemained = true;
+                break;
+            }
             uint256 maxAmount;
             unchecked {
                 if (key.takerPolicy.usesQuote()) {
