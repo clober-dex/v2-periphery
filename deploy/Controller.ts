@@ -13,7 +13,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   const chain = await getChain(network.provider)
   const deployer = (await getNamedAccounts())['deployer'] as Address
 
-  await deployCreate3WithVerify(deployer, 0xfffffn, 'Controller', [BOOK_MANAGER[chain.id]])
+  await deployCreate3WithVerify(deployer, 0xfffffn + 1n, 'Controller', [BOOK_MANAGER[chain.id]])
 }
 
 deployFunction.tags = ['Controller']
