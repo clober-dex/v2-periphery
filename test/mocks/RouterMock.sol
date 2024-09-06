@@ -11,8 +11,10 @@ contract RouterMock {
         if (inToken != address(0)) {
             IERC20(inToken).transferFrom(msg.sender, address(this), inAmount);
         } else {
-            msg.sender.call{value: msg.value - inAmount}("");
-            address(0).call{value: inAmount}("");
+            (bool success,) = msg.sender.call{value: msg.value - inAmount}("");
+            require(success, "RouterMock: ETH transfer failed");
+            (success,) = address(0).call{value: inAmount}("");
+            require(success, "RouterMock: ETH transfer failed");
         }
         Currency.wrap(outToken).transfer(msg.sender, outAmount);
     }
