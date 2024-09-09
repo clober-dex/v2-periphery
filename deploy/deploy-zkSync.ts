@@ -5,14 +5,21 @@ import { Deployer } from '@matterlabs/hardhat-zksync-deploy'
 
 // load env file
 import dotenv from 'dotenv'
-import { BOOK_MANAGER } from '../utils'
-import { getChain } from '@nomicfoundation/hardhat-viem/internal/chains'
+import { BOOK_MANAGER, SAFE_WALLET } from '../utils'
+import { getChain, isDevelopmentNetwork } from '@nomicfoundation/hardhat-viem/internal/chains'
+import chains, { zkSync, zkSyncSepoliaTestnet } from 'viem/chains'
+import { Address } from 'viem'
+import { getNamedAccounts } from 'hardhat'
 dotenv.config()
 
 // An example of a deploy script that will deploy and call a simple contract.
 export default async function (hre: HardhatRuntimeEnvironment) {
-  const chain = await getChain(hre.network.provider)
   console.log(`Running deploy script for the Controller/Viewer contract`)
+  const chain = await getChain(hre.network.provider)
+
+  if (chain.id !== zkSyncSepoliaTestnet.id && chain.id !== zkSync.id) {
+    throw new Error('Unsupported chain')
+  }
 
   // Initialize the wallet.
   const accounts = hre.config.networks[chain.id].accounts
@@ -66,5 +73,34 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     address: viewerAddress,
     constructorArguments: [bookManager],
     contract: 'src/BookViewer.sol:BookViewer',
+  })
+
+  let owner: Address
+  if (chain.testnet || isDevelopmentNetwork(chain.id)) {
+    owner = deployer.zkWallet.address as Address
+  } else {
+    owner = SAFE_WALLET[chain.id] // Safe
+    if (owner == undefined) {
+      throw new Error('Unknown chain')
+    }
+  }
+  const arbitrageArtifact = await deployer.loadArtifact('Arbitrage')
+  deploymentFee = await deployer.estimateDeployFee(arbitrageArtifact, [bookManager, owner])
+  parsedFee = ethers.formatEther(deploymentFee)
+  console.log(`The deployment is estimated to cost ${parsedFee} ETH`)
+
+  const arbitrageContract = await deployer.deploy(arbitrageArtifact, [bookManager, owner])
+
+  //obtain the Constructor Arguments
+  console.log('constructor args:' + arbitrageContract.interface.encodeDeploy([bookManager, owner]))
+
+  // Show the contract info.
+  const arbitrageAddress = await arbitrageContract.getAddress()
+  console.log(`${arbitrageArtifact.contractName} was deployed to ${arbitrageAddress}`)
+
+  await hre.run('verify:verify', {
+    address: arbitrageAddress,
+    constructorArguments: [bookManager, owner],
+    contract: 'src/Arbitrage.sol:Arbitrage',
   })
 }

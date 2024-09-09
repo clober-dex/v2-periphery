@@ -30,9 +30,9 @@
     "@matterlabs/hardhat-zksync-deploy": "^1.5.0",
     "@matterlabs/hardhat-zksync-solc": "^1.2.3",
     "@matterlabs/hardhat-zksync-verify": "^1.6.0",
-    "@nomicfoundation/hardhat-viem": "^2.0.0",
-    "@nomicfoundation/hardhat-foundry": "^1.1.1",
-    "@nomicfoundation/hardhat-verify": "^2.0.6",
+    "@nomicfoundation/hardhat-foundry": "^1.1.2",
+    "@nomicfoundation/hardhat-verify": "^2.0.10",
+    "@nomicfoundation/hardhat-viem": "^2.0.4",
     "@openzeppelin/upgrades-core": "^1.33.1",
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
@@ -43,7 +43,7 @@
     "hardhat": "^2.22.2",
     "hardhat-abi-exporter": "^2.10.1",
     "hardhat-contract-sizer": "^2.10.0",
-    "hardhat-deploy": "^0.12.4",
+    "hardhat-deploy": "^0.12.2",
     "hardhat-gas-reporter": "^1.0.9",
     "hardhat-log-remover": "^2.0.2",
     "keythereum": "^2.0.0",
@@ -52,6 +52,6 @@
     "prettier-plugin-solidity": "^1.2.0",
     "readline-sync": "^1.4.10",
     "ts-node": "^10.9.2",
-    "viem": "^2.20.0"
+    "viem": "2.15.0"
   }
 }
