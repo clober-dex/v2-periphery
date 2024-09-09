@@ -113,14 +113,10 @@ contract Controller is IController, ILocker, ReentrancyGuard {
                 _spend(abi.decode(orderParamsList[i], (SpendOrderParams)));
             } else if (action == Action.CLAIM) {
                 ClaimOrderParams memory claimOrderParams = abi.decode(orderParamsList[i], (ClaimOrderParams));
-                uint256 orderId = OrderId.unwrap(claimOrderParams.id);
-                bookManager.checkAuthorized(bookManager.ownerOf(orderId), user, orderId);
-                _claim(claimOrderParams);
+                if (_isValidOrderId(claimOrderParams.id, user)) _claim(claimOrderParams);
             } else if (action == Action.CANCEL) {
                 CancelOrderParams memory cancelOrderParams = abi.decode(orderParamsList[i], (CancelOrderParams));
-                uint256 orderId = OrderId.unwrap(cancelOrderParams.id);
-                bookManager.checkAuthorized(bookManager.ownerOf(orderId), user, orderId);
-                _cancel(cancelOrderParams);
+                if (_isValidOrderId(cancelOrderParams.id, user)) _cancel(cancelOrderParams);
             } else {
                 revert InvalidAction();
             }
@@ -132,6 +128,19 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             mstore(ids, orderIdIndex)
         }
         returnData = abi.encode(ids);
+    }
+
+    function _isValidOrderId(OrderId orderId, address user) internal view returns (bool) {
+        uint256 id = OrderId.unwrap(orderId);
+        try bookManager.ownerOf(id) returns (address owner) {
+            try bookManager.checkAuthorized(owner, user, id) {
+                return true;
+            } catch {
+                return false;
+            }
+        } catch {
+            return false;
+        }
     }
 
     function execute(

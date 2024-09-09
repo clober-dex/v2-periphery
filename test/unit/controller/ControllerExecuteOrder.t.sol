@@ -206,4 +206,49 @@ contract ControllerExecuteOrderTest is Test {
             94 * 10 ** 18 - (152 * 10 ** 18 + 1000000000000 - 94000000000000000000 + spentQuoteAmount)
         );
     }
+
+    function testClaimAndCancel() public {
+        // take all
+        IController.TakeOrderParams[] memory orderParamsList = new IController.TakeOrderParams[](1);
+        orderParamsList[0] = _takeOrder(Constants.QUOTE_AMOUNT3);
+
+        address[] memory tokensToSettle = new address[](1);
+        tokensToSettle[0] = address(mockErc20);
+        IController.ERC20PermitParams[] memory permitParamsList;
+
+        vm.startPrank(Constants.TAKER1);
+        mockErc20.approve(address(controller), type(uint256).max);
+        controller.take(orderParamsList, tokensToSettle, permitParamsList, uint64(block.timestamp));
+        vm.stopPrank();
+
+        // check claimable
+        assertEq(manager.getOrder(orderId1).open, 0, "OPEN_SHOULD_BE_ZERO");
+
+        // claim and cancel
+        IController.Action[] memory actionList = new IController.Action[](2);
+        actionList[0] = IController.Action.CLAIM;
+        actionList[1] = IController.Action.CANCEL;
+
+        bytes[] memory paramsDataList = new bytes[](2);
+        paramsDataList[0] = abi.encode(_claimOrder(orderId1));
+        paramsDataList[1] = abi.encode(_cancelOrder(orderId1));
+
+        address[] memory tokensToSettle2 = new address[](1);
+        tokensToSettle2[0] = address(mockErc20);
+
+        vm.startPrank(Constants.MAKER1);
+        manager.approve(address(controller), OrderId.unwrap(orderId1));
+        controller.execute(
+            actionList,
+            paramsDataList,
+            tokensToSettle2,
+            permitParamsList,
+            new IController.ERC721PermitParams[](0),
+            uint64(block.timestamp)
+        );
+
+        IBookManager.OrderInfo memory orderInfo = manager.getOrder(orderId1);
+        assertEq(orderInfo.open, 0, "OPEN");
+        assertEq(orderInfo.claimable, 0, "CLAIMABLE");
+    }
 }
