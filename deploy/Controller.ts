@@ -13,8 +13,6 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
   const chain = await getChain(network.provider)
 
   const { deployer } = await getNamedAccounts()
-  console.log(deployer.toString())
-  console.log([BOOK_MANAGER[chain.id]])
   await deployCreate3WithVerify(deployer as Address, 0xfffffn + 3n, 'Controller', [BOOK_MANAGER[chain.id]])
 }
 
