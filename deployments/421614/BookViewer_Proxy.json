@@ -1,5 +1,5 @@
 {
-  "address": "0x73c524e103C94Bf2743659d739586395B1A9e1BE",
+  "address": "0xb291cb35361a740Af7BDfA1B2CbDD4522Ed9a50F",
   "abi": [
     {
       "inputs": [
@@ -67,9 +67,9 @@
       "type": "fallback"
     }
   ],
-  "transactionHash": "0x9173ff4e2e90054195d832491dfcfb47b75af46eb72412f26b1baa0954967f21",
+  "transactionHash": "0x49c27f444672fd5f3907e89055811bf14c313e3caa29dcaab4497f2d733c9f81",
   "args": [
-    "0x9b636BBAf717F5088713F38b8D762Ee1F2F933c3",
+    "0xaE71b8CF73C32e49B4E3EA387b41D7cd0bC149F3",
     "0x50a216c60000000000000000000000005f79ee8f8fa862e98201120d83c4ec39d9468d49"
   ],
   "numDeployments": 1,
