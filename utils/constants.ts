@@ -2,7 +2,7 @@ import { arbitrum, arbitrumSepolia, base, berachainTestnetbArtio, zkSync, zkSync
 import { Address } from 'viem'
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
-  [arbitrumSepolia.id]: '0xC528b9ED5d56d1D0d3C18A2342954CE1069138a4',
+  [arbitrumSepolia.id]: '0xAA9575d63dFC224b9583fC303dB3188C08d5C85A',
   [base.id]: '0x382CCccbD3b142D7DA063bF68cd0c89634767F76',
   [berachainTestnetbArtio.id]: '0x874b1B795993653fbFC3f1c1fc0469214cC9F4A5',
   [zkSyncSepoliaTestnet.id]: '0x76F479c6ae5Cdd3180C9cAa09bEefeBC78fdB931',
