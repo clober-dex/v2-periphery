@@ -35,7 +35,7 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
       functionName: '__BookViewer_init',
       args: [owner],
     })
-    viewer = await deployCreate3WithVerify(deployer, 0xffffn + 6n, 'BookViewer_Proxy', [implementation, initData], {
+    viewer = await deployWithVerify(hre, 'BookViewer_Proxy', [implementation, initData], {
       contract: 'ERC1967Proxy',
     })
   }

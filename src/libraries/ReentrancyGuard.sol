@@ -20,19 +20,19 @@ abstract contract ReentrancyGuard {
         }
         assembly {
             // Any calls to nonReentrant after this point will fail
-            tstore(REENTRANCY_GUARD_SLOT, 1)
+            sstore(REENTRANCY_GUARD_SLOT, 1)
         }
     }
 
     function _nonReentrantAfter() private {
         assembly {
-            tstore(REENTRANCY_GUARD_SLOT, 0)
+            sstore(REENTRANCY_GUARD_SLOT, 0)
         }
     }
 
     function _reentrancyGuardEntered() internal view returns (bool isEntered) {
         assembly {
-            isEntered := tload(REENTRANCY_GUARD_SLOT)
+            isEntered := sload(REENTRANCY_GUARD_SLOT)
         }
     }
 }
