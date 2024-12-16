@@ -6,7 +6,7 @@ export const BOOK_MANAGER: { [chainId: number]: Address } = {
   [base.id]: '0x382CCccbD3b142D7DA063bF68cd0c89634767F76',
   [berachainTestnetbArtio.id]: '0x874b1B795993653fbFC3f1c1fc0469214cC9F4A5',
   [zkSyncSepoliaTestnet.id]: '0x76F479c6ae5Cdd3180C9cAa09bEefeBC78fdB931',
-  [zkSync.id]: '0xAc6AdB2727F99C309acd511D942c0b2812e03614',
+  [zkSync.id]: '0xDC5C6B6246Aa719D39b511F808bE27583240bAa9',
 }
 
 export const SAFE_WALLET: { [chainId: number]: Address } = {
