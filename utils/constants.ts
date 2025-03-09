@@ -1,4 +1,12 @@
-import { arbitrum, arbitrumSepolia, base, berachainTestnetbArtio, zkSync, zkSyncSepoliaTestnet } from 'viem/chains'
+import {
+  arbitrum,
+  arbitrumSepolia,
+  base,
+  berachainTestnetbArtio,
+  monadTestnet,
+  zkSync,
+  zkSyncSepoliaTestnet,
+} from 'viem/chains'
 import { Address } from 'viem'
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
@@ -7,6 +15,7 @@ export const BOOK_MANAGER: { [chainId: number]: Address } = {
   [berachainTestnetbArtio.id]: '0x874b1B795993653fbFC3f1c1fc0469214cC9F4A5',
   [zkSyncSepoliaTestnet.id]: '0x76F479c6ae5Cdd3180C9cAa09bEefeBC78fdB931',
   [zkSync.id]: '0xAc6AdB2727F99C309acd511D942c0b2812e03614',
+  [monadTestnet.id]: '0xAA9575d63dFC224b9583fC303dB3188C08d5C85A',
 }
 
 export const SAFE_WALLET: { [chainId: number]: Address } = {
