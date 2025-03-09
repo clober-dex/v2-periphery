@@ -347,8 +347,9 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             maxAmount = maxAmount.divide(key.unitSize, true);
 
             if (maxAmount == 0) break;
+            if (maxAmount > type(uint64).max) maxAmount = type(uint64).max;
             (uint256 quoteAmount, uint256 baseAmount) = bookManager.take(
-                IBookManager.TakeParams({key: key, tick: tick, maxUnit: maxAmount.toUint64()}), params.hookData
+                IBookManager.TakeParams({key: key, tick: tick, maxUnit: uint64(maxAmount)}), params.hookData
             );
             if (quoteAmount == 0) break;
 
@@ -382,8 +383,9 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             }
             maxAmount = tick.baseToQuote(maxAmount, false) / key.unitSize;
             if (maxAmount == 0) break;
+            if (maxAmount > type(uint64).max) maxAmount = type(uint64).max;
             (uint256 quoteAmount, uint256 baseAmount) = bookManager.take(
-                IBookManager.TakeParams({key: key, tick: tick, maxUnit: maxAmount.toUint64()}), params.hookData
+                IBookManager.TakeParams({key: key, tick: tick, maxUnit: uint64(maxAmount)}), params.hookData
             );
             if (baseAmount == 0) break;
             takenQuoteAmount += quoteAmount;
