@@ -74,6 +74,7 @@ interface IController {
         BookId id;
         Tick tick;
         uint256 quoteAmount;
+        address provider;
         bytes hookData;
     }
 
@@ -86,6 +87,7 @@ interface IController {
         uint256 limitPrice;
         Tick tick;
         uint256 quoteAmount;
+        address provider;
         bytes takeHookData;
         bytes makeHookData;
     }

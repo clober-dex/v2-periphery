@@ -297,7 +297,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         uint64 unit = (quoteAmount / key.unitSize).toUint64();
         if (unit > 0) {
             (id,) = bookManager.make(
-                IBookManager.MakeParams({key: key, tick: params.tick, unit: unit, provider: address(0)}),
+                IBookManager.MakeParams({key: key, tick: params.tick, unit: unit, provider: params.provider}),
                 params.hookData
             );
         }
@@ -321,6 +321,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
                     id: params.makeBookId,
                     quoteAmount: params.quoteAmount,
                     tick: params.tick,
+                    provider: params.provider,
                     hookData: params.makeHookData
                 })
             );

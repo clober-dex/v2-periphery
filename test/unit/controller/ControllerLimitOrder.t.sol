@@ -65,6 +65,7 @@ contract ControllerLimitOrderTest is ControllerTest {
             id: takeBookKey.toId(),
             tick: Tick.wrap(0),
             quoteAmount: Constants.QUOTE_AMOUNT3,
+            provider: address(0),
             hookData: ""
         });
 

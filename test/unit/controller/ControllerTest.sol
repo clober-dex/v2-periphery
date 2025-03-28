@@ -21,8 +21,13 @@ abstract contract ControllerTest is Test {
         IController.MakeOrderParams[] memory paramsList = new IController.MakeOrderParams[](1);
         address[] memory tokensToSettle;
         IController.ERC20PermitParams[] memory permitParamsList;
-        paramsList[0] =
-            IController.MakeOrderParams({id: key.toId(), tick: Tick.wrap(tick), quoteAmount: quoteAmount, hookData: ""});
+        paramsList[0] = IController.MakeOrderParams({
+            id: key.toId(),
+            tick: Tick.wrap(tick),
+            quoteAmount: quoteAmount,
+            provider: address(0),
+            hookData: ""
+        });
 
         vm.prank(maker);
         id = controller.make{value: quoteAmount}(paramsList, tokensToSettle, permitParamsList, uint64(block.timestamp))[0];
@@ -87,6 +92,7 @@ abstract contract ControllerTest is Test {
             limitPrice: 0,
             tick: Tick.wrap(tick),
             quoteAmount: quoteAmount,
+            provider: address(0),
             takeHookData: "",
             makeHookData: ""
         });
