@@ -4,12 +4,14 @@ import {
   base,
   berachainTestnetbArtio,
   monadTestnet,
+  sepolia,
   zkSync,
   zkSyncSepoliaTestnet,
 } from 'viem/chains'
 import { Address } from 'viem'
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
+  [sepolia.id]: '0xAA9575d63dFC224b9583fC303dB3188C08d5C85A',
   [arbitrumSepolia.id]: '0xAA9575d63dFC224b9583fC303dB3188C08d5C85A',
   [base.id]: '0x382CCccbD3b142D7DA063bF68cd0c89634767F76',
   [berachainTestnetbArtio.id]: '0x874b1B795993653fbFC3f1c1fc0469214cC9F4A5',
