@@ -429,11 +429,11 @@ contract Controller is IController, ILocker, ReentrancyGuard {
             }
             currencyDelta = bookManager.getCurrencyDelta(address(this), currency);
             if (currencyDelta > 0) {
-                bookManager.withdraw(Currency.wrap(tokensToSettle[i]), user, uint256(currencyDelta));
+                bookManager.withdraw(currency, user, uint256(currencyDelta));
             }
             uint256 balance = IERC20(tokensToSettle[i]).balanceOf(address(this));
             if (balance > 0) {
-                IERC20(tokensToSettle[i]).transfer(user, balance);
+                currency.transfer(user, balance);
             }
         }
         if (address(this).balance > 0) native.transfer(user, address(this).balance);
