@@ -3,6 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { deployWithVerify, BOOK_MANAGER, deployCreate3WithVerify, SAFE_WALLET } from '../utils'
 import { getChain, isDevelopmentNetwork } from '@nomicfoundation/hardhat-viem/internal/chains'
 import { Address, encodeFunctionData } from 'viem'
+import { monadPrivateMainnet } from '../utils/chains'
 
 const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre
@@ -15,6 +16,8 @@ const deployFunction: DeployFunction = async function (hre: HardhatRuntimeEnviro
 
   let owner: Address = '0x'
   if (chain.testnet || isDevelopmentNetwork(chain.id)) {
+    owner = deployer
+  } else if (chain.id === monadPrivateMainnet.id) {
     owner = deployer
   } else {
     owner = SAFE_WALLET[chain.id] // Safe

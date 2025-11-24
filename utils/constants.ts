@@ -9,6 +9,7 @@ import {
   zkSyncSepoliaTestnet,
 } from 'viem/chains'
 import { Address } from 'viem'
+import { monadPrivateMainnet, riseTestnet } from './chains'
 
 export const BOOK_MANAGER: { [chainId: number]: Address } = {
   [sepolia.id]: '0xAA9575d63dFC224b9583fC303dB3188C08d5C85A',
@@ -18,6 +19,8 @@ export const BOOK_MANAGER: { [chainId: number]: Address } = {
   [zkSyncSepoliaTestnet.id]: '0x76F479c6ae5Cdd3180C9cAa09bEefeBC78fdB931',
   [zkSync.id]: '0xAc6AdB2727F99C309acd511D942c0b2812e03614',
   [monadTestnet.id]: '0xAA9575d63dFC224b9583fC303dB3188C08d5C85A',
+  [riseTestnet.id]: '0xBc6eaFe723723DED3a411b6a1089a63bc5d73568',
+  [monadPrivateMainnet.id]: '0x6657d192273731C3cAc646cc82D5F28D0CBE8CCC',
 }
 
 export const SAFE_WALLET: { [chainId: number]: Address } = {
