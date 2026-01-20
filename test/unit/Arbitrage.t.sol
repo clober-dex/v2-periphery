@@ -55,11 +55,7 @@ contract ControllerTakeOrderTest is ControllerTest {
 
     function testArbitrage() public {
         IController.SpendOrderParams memory paramsList = IController.SpendOrderParams({
-            id: key.toId(),
-            limitPrice: 0,
-            baseAmount: Constants.BASE_AMOUNT1,
-            minQuoteAmount: 0,
-            hookData: ""
+            id: key.toId(), limitPrice: 0, baseAmount: Constants.BASE_AMOUNT1, minQuoteAmount: 0, hookData: ""
         });
         (uint256 takenQuoteAmount, uint256 spentBaseAmount) = bookViewer.getExpectedOutput(paramsList);
 

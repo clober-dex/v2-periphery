@@ -75,11 +75,7 @@ contract ControllerExecuteOrderTest is Test {
         returns (IController.MakeOrderParams memory params)
     {
         params = IController.MakeOrderParams({
-            id: key.toId(),
-            tick: Tick.wrap(tick),
-            quoteAmount: quoteAmount,
-            provider: address(0),
-            hookData: ""
+            id: key.toId(), tick: Tick.wrap(tick), quoteAmount: quoteAmount, provider: address(0), hookData: ""
         });
 
         return params;
@@ -87,11 +83,7 @@ contract ControllerExecuteOrderTest is Test {
 
     function _takeOrder(uint256 quoteAmount) internal view returns (IController.TakeOrderParams memory params) {
         params = IController.TakeOrderParams({
-            id: key.toId(),
-            limitPrice: 0,
-            quoteAmount: quoteAmount,
-            maxBaseAmount: type(uint256).max,
-            hookData: ""
+            id: key.toId(), limitPrice: 0, quoteAmount: quoteAmount, maxBaseAmount: type(uint256).max, hookData: ""
         });
 
         return params;
@@ -99,11 +91,7 @@ contract ControllerExecuteOrderTest is Test {
 
     function _spendOrder(uint256 baseAmount) internal view returns (IController.SpendOrderParams memory params) {
         params = IController.SpendOrderParams({
-            id: key.toId(),
-            limitPrice: 0,
-            baseAmount: baseAmount,
-            minQuoteAmount: 0,
-            hookData: ""
+            id: key.toId(), limitPrice: 0, baseAmount: baseAmount, minQuoteAmount: 0, hookData: ""
         });
     }
 

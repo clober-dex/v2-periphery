@@ -18,9 +18,9 @@ import {Tick, TickLibrary} from "v2-core/libraries/Tick.sol";
 import {OrderId, OrderIdLibrary} from "v2-core/libraries/OrderId.sol";
 
 import {IController} from "./interfaces/IController.sol";
-import {ReentrancyGuard} from "./libraries/ReentrancyGuard.sol";
+import {ReentrancyGuardTransient} from "@openzeppelin/contracts/utils/ReentrancyGuardTransient.sol";
 
-contract Controller is IController, ILocker, ReentrancyGuard {
+contract Controller is IController, ILocker, ReentrancyGuardTransient {
     using TickLibrary for *;
     using OrderIdLibrary for OrderId;
     using BookIdLibrary for IBookManager.BookKey;
@@ -328,10 +328,7 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         }
     }
 
-    function _take(TakeOrderParams memory params)
-        internal
-        returns (uint256 takenQuoteAmount, uint256 spentBaseAmount)
-    {
+    function _take(TakeOrderParams memory params) internal returns (uint256 takenQuoteAmount, uint256 spentBaseAmount) {
         IBookManager.BookKey memory key = bookManager.getBookKey(params.id);
 
         while (params.quoteAmount > takenQuoteAmount && !bookManager.isEmpty(params.id)) {
@@ -404,7 +401,8 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         try bookManager.cancel(
             IBookManager.CancelParams({id: params.id, toUnit: (params.leftQuoteAmount / key.unitSize).toUint64()}),
             params.hookData
-        ) {} catch {}
+        ) {}
+            catch {}
     }
 
     function _settleTokens(address user, address[] memory tokensToSettle) internal {
@@ -443,15 +441,17 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         for (uint256 i = 0; i < permitParamsList.length; ++i) {
             ERC20PermitParams memory permitParams = permitParamsList[i];
             if (permitParams.signature.deadline > 0) {
-                try IERC20Permit(permitParams.token).permit(
-                    msg.sender,
-                    address(this),
-                    permitParams.permitAmount,
-                    permitParams.signature.deadline,
-                    permitParams.signature.v,
-                    permitParams.signature.r,
-                    permitParams.signature.s
-                ) {} catch {}
+                try IERC20Permit(permitParams.token)
+                    .permit(
+                        msg.sender,
+                        address(this),
+                        permitParams.permitAmount,
+                        permitParams.signature.deadline,
+                        permitParams.signature.v,
+                        permitParams.signature.r,
+                        permitParams.signature.s
+                    ) {}
+                    catch {}
             }
         }
     }
@@ -460,14 +460,16 @@ contract Controller is IController, ILocker, ReentrancyGuard {
         for (uint256 i = 0; i < permitParamsList.length; ++i) {
             PermitSignature memory signature = permitParamsList[i].signature;
             if (signature.deadline > 0) {
-                try IERC721Permit(address(bookManager)).permit(
-                    address(this),
-                    permitParamsList[i].tokenId,
-                    signature.deadline,
-                    signature.v,
-                    signature.r,
-                    signature.s
-                ) {} catch {}
+                try IERC721Permit(address(bookManager))
+                    .permit(
+                        address(this),
+                        permitParamsList[i].tokenId,
+                        signature.deadline,
+                        signature.v,
+                        signature.r,
+                        signature.s
+                    ) {}
+                    catch {}
             }
         }
     }

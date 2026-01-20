@@ -22,15 +22,13 @@ abstract contract ControllerTest is Test {
         address[] memory tokensToSettle;
         IController.ERC20PermitParams[] memory permitParamsList;
         paramsList[0] = IController.MakeOrderParams({
-            id: key.toId(),
-            tick: Tick.wrap(tick),
-            quoteAmount: quoteAmount,
-            provider: address(0),
-            hookData: ""
+            id: key.toId(), tick: Tick.wrap(tick), quoteAmount: quoteAmount, provider: address(0), hookData: ""
         });
 
         vm.prank(maker);
-        id = controller.make{value: quoteAmount}(paramsList, tokensToSettle, permitParamsList, uint64(block.timestamp))[0];
+        id = controller.make{value: quoteAmount}(
+            paramsList, tokensToSettle, permitParamsList, uint64(block.timestamp)
+        )[0];
     }
 
     function _takeOrder(uint256 quoteAmount, uint256 maxBaseAmount, address taker)
@@ -42,11 +40,7 @@ abstract contract ControllerTest is Test {
         tokensToSettle[0] = address(mockErc20);
         IController.ERC20PermitParams[] memory permitParamsList;
         paramsList[0] = IController.TakeOrderParams({
-            id: key.toId(),
-            limitPrice: 0,
-            quoteAmount: quoteAmount,
-            maxBaseAmount: type(uint256).max,
-            hookData: ""
+            id: key.toId(), limitPrice: 0, quoteAmount: quoteAmount, maxBaseAmount: type(uint256).max, hookData: ""
         });
 
         (expectedTakeAmount, expectedBaseAmount) = bookViewer.getExpectedInput(paramsList[0]);
@@ -65,11 +59,7 @@ abstract contract ControllerTest is Test {
         tokensToSettle[0] = address(mockErc20);
         IController.ERC20PermitParams[] memory permitParamsList;
         paramsList[0] = IController.SpendOrderParams({
-            id: key.toId(),
-            limitPrice: 0,
-            baseAmount: baseAmount,
-            minQuoteAmount: 0,
-            hookData: ""
+            id: key.toId(), limitPrice: 0, baseAmount: baseAmount, minQuoteAmount: 0, hookData: ""
         });
 
         (expectedTakeAmount, expectedBaseAmount) = bookViewer.getExpectedOutput(paramsList[0]);

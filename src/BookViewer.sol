@@ -29,6 +29,7 @@ contract BookViewer is IBookViewer, UUPSUpgradeable, Ownable2Step, Initializable
 
     constructor(IBookManager bookManager_) Ownable(msg.sender) {
         bookManager = bookManager_;
+        _disableInitializers();
     }
 
     function __BookViewer_init(address owner) external initializer {

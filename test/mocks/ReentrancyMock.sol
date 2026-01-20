@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.20;
 
-import {ReentrancyGuard} from "../../src/libraries/ReentrancyGuard.sol";
+import {ReentrancyGuardTransient} from "@openzeppelin/contracts/utils/ReentrancyGuardTransient.sol";
 
-contract ReentrancyGuardMock is ReentrancyGuard {
+contract ReentrancyGuardMock is ReentrancyGuardTransient {
     uint256 public count;
 
     function increaseCountWithCallback(bytes calldata data) public nonReentrant {

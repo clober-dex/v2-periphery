@@ -12,10 +12,10 @@ import {BookId, BookIdLibrary} from "v2-core/libraries/BookId.sol";
 import {Currency, CurrencyLibrary} from "v2-core/libraries/Currency.sol";
 import {FeePolicy, FeePolicyLibrary} from "v2-core/libraries/FeePolicy.sol";
 import {Tick, TickLibrary} from "v2-core/libraries/Tick.sol";
-import {ReentrancyGuard} from "./libraries/ReentrancyGuard.sol";
+import {ReentrancyGuardTransient} from "@openzeppelin/contracts/utils/ReentrancyGuardTransient.sol";
 import {IArbitrage} from "./interfaces/IArbitrage.sol";
 
-contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuard {
+contract Arbitrage is IArbitrage, Ownable2Step, ILocker, ReentrancyGuardTransient {
     using TickLibrary for Tick;
     using SafeCast for uint256;
     using CurrencyLibrary for Currency;

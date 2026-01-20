@@ -15,42 +15,46 @@ Periphery Contract of Clober DEX V2
     - [Install](#install)
     - [Usage](#usage)
         - [Tests](#tests)
-        - [Linting](#linting)
+        - [Formatting](#formatting)
 
 ## Deployments
 
-All deployments can be found in the [deployments](./deployments) directory.
+> Note: `BookViewer` is deployed behind an ERC1967 proxy. The address below is the **proxy address**.
+
+| Network | Chain ID | Controller | BookViewer |
+| --- | ---: | --- | --- |
+| Base | 8453 | [`0x2610dc1f2e625e57f07b0ce17152b0f4c6520bca`](https://basescan.org/address/0x2610dc1f2e625e57f07b0ce17152b0f4c6520bca) | [`0xcd166f67f13c7d5c4b899fb1c980dceff278f029`](https://basescan.org/address/0xcd166f67f13c7d5c4b899fb1c980dceff278f029) |
+| Arbitrum One | 42161 | [`0x53691300635ce3ae575f91a186c2248a0e159830`](https://arbiscan.io/address/0x53691300635ce3ae575f91a186c2248a0e159830) | [`0xc6ed4be4a69fd23eb6ab9c6f8b787748def2362e`](https://arbiscan.io/address/0xc6ed4be4a69fd23eb6ab9c6f8b787748def2362e) |
+| Monad | 143 | [`0x19b68a2b909D96c05B623050C276FBD457De8e83`](https://monadvision.com/address/0x19b68a2b909D96c05B623050C276FBD457De8e83) | [`0xe424c211e2Ed8a5B6d1C57FA493C41715568D238`](https://monadvision.com/address/0xe424c211e2Ed8a5B6d1C57FA493C41715568D238) |
 
 ## Install
 
 
 ### Prerequisites
-- We use [Forge Foundry](https://github.com/foundry-rs/foundry) for test. Follow the [guide](https://github.com/foundry-rs/foundry#installation) to install Foundry.
+- We use [Foundry](https://github.com/foundry-rs/foundry). Follow the [installation guide](https://github.com/foundry-rs/foundry#installation).
 
 ### Installing From Source
 
 ```bash
 git clone https://github.com/clober-dex/v2-periphery && cd v2-periphery
-npm install
+git submodule update --init --recursive
+forge install
 ```
 
 ## Usage
 
 ### Tests
 ```bash
-npm run test
+forge test
 ```
 
-### Linting
+### Formatting
 
-To run lint checks:
 ```bash
-npm run prettier:ts
-npm run lint:sol
+forge fmt --check
 ```
 
-To run lint fixes:
+To format files:
 ```bash
-npm run prettier:fix:ts
-npm run lint:fix:sol
+forge fmt
 ```
